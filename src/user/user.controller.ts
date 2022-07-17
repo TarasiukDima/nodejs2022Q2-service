@@ -16,7 +16,7 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { USER_MESSAGES } from '../settings/messages';
-import { checkIdValid } from '../utils/index';
+import { VERSION_UUID } from '../settings/index';
 
 @Controller('user')
 export class UserController {
@@ -41,7 +41,7 @@ export class UserController {
       'id',
       new ParseUUIDPipe({
         errorHttpStatusCode: StatusCodes.BAD_REQUEST as number,
-        version: '4',
+        version: VERSION_UUID,
       }),
     )
     id: string,
@@ -62,16 +62,12 @@ export class UserController {
       'id',
       new ParseUUIDPipe({
         errorHttpStatusCode: StatusCodes.BAD_REQUEST as number,
-        version: '4',
+        version: VERSION_UUID,
       }),
     )
     id: string,
     @Body() { oldPassword, newPassword }: UpdateUserDto,
   ) {
-    if (!checkIdValid(id)) {
-      throw new NotFoundException(USER_MESSAGES.invalidUserId);
-    }
-
     const updatedUser = await this.userService.update(id, {
       oldPassword,
       newPassword,
@@ -94,7 +90,7 @@ export class UserController {
       'id',
       new ParseUUIDPipe({
         errorHttpStatusCode: StatusCodes.BAD_REQUEST as number,
-        version: '4',
+        version: VERSION_UUID,
       }),
     )
     id: string,

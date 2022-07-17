@@ -1,26 +1,48 @@
 import { Injectable } from '@nestjs/common';
+import { v4 } from 'uuid';
+import { MemoryDB } from '../memoryDB/memoryDB';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
+import { Artist } from './entities/artist.entity';
 
 @Injectable()
 export class ArtistService {
-  create(createArtistDto: CreateArtistDto) {
-    return 'This action adds a new artist';
-  }
+  private memory: MemoryDB<Artist> = new MemoryDB<Artist>();
 
-  findAll() {
-    return `This action returns all artist`;
-  }
+  create = async (createArtistDto: CreateArtistDto) => {
+    const artist = new Artist({
+      id: v4(),
+      name: createArtistDto.name,
+      grammy: createArtistDto.grammy,
+    });
 
-  findOne(id: number) {
-    return `This action returns a #${id} artist`;
-  }
+    return await this.memory.addItem(artist);
+  };
 
-  update(id: number, updateArtistDto: UpdateArtistDto) {
-    return `This action updates a #${id} artist`;
-  }
+  findAll = async () => {
+    return await this.memory.getAllItems();
+  };
 
-  remove(id: number) {
-    return `This action removes a #${id} artist`;
-  }
+  findOne = async (id: string) => {
+    return await this.memory.getOneItemById(id);
+  };
+
+  update = async (id: string, updateArtistDto: UpdateArtistDto) => {
+    const artist = await this.memory.getOneItemById(id);
+
+    if (!artist) {
+      return null;
+    }
+
+    const artistUpdated = new Artist({
+      ...artist,
+      ...updateArtistDto,
+    });
+
+    return await this.memory.updateItem(id, artistUpdated);
+  };
+
+  remove = async (id: string) => {
+    return await this.memory.removeItem(id);
+  };
 }

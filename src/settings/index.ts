@@ -8,3 +8,5 @@ export const JWT_SECRET_REFRESH_KEY =
 export const TOKEN_EXPIRE_TIME = process.env.TOKEN_EXPIRE_TIME || '5h';
 export const TOKEN_REFRESH_EXPIRE_TIME =
   process.env.TOKEN_REFRESH_EXPIRE_TIME || '5h';
+
+export const VERSION_UUID = '4';
