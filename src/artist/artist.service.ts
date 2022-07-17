@@ -21,7 +21,7 @@ export class ArtistService {
     private favoritesService: FavoritesService,
   ) {}
 
-  create = async (createArtistDto: CreateArtistDto) => {
+  create = async (createArtistDto: CreateArtistDto): Promise<Artist> => {
     const artist = new Artist({
       id: v4(),
       name: createArtistDto.name,
@@ -31,15 +31,18 @@ export class ArtistService {
     return await ArtistService.memory.addItem(artist);
   };
 
-  findAll = async () => {
+  findAll = async (): Promise<Array<Artist>> => {
     return await ArtistService.memory.getAllItems();
   };
 
-  findOne = async (id: string) => {
+  findOne = async (id: string): Promise<Artist | null> => {
     return await ArtistService.memory.getOneItemById(id);
   };
 
-  update = async (id: string, updateArtistDto: UpdateArtistDto) => {
+  update = async (
+    id: string,
+    updateArtistDto: UpdateArtistDto,
+  ): Promise<Artist | null> => {
     const artist = await ArtistService.memory.getOneItemById(id);
 
     if (!artist) {
@@ -54,7 +57,7 @@ export class ArtistService {
     return await ArtistService.memory.updateItem(id, artistUpdated);
   };
 
-  remove = async (id: string) => {
+  remove = async (id: string): Promise<boolean> => {
     await this.favoritesService.removeArtist(id);
     await this.trackService.removeArtistIdLink(id);
     await this.albumService.removeArtistIdLink(id);

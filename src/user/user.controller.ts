@@ -80,6 +80,7 @@ export class UserController {
     if (!updatedUser) {
       throw new NotFoundException(USER_MESSAGES.notFoundUser);
     }
+
     return updatedUser;
   }
 

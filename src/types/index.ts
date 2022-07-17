@@ -1,34 +1,19 @@
 /* album start */
-export interface IAlbumCommon {
+export interface IAlbum {
   id: string; // uuid v4
   name: string;
   year: number;
-}
-
-export interface IAlbum extends IAlbumCommon {
   artistId: string | null;
-}
-
-export interface IAlbumResponse extends IAlbumCommon {
-  artistId: IArtist | null;
 }
 /* album end */
 
 /* track start */
-export interface ITrackCommon {
+export interface ITrack {
   id: string; // uuid v4
   name: string;
   duration: number; // integer number
-}
-
-export interface ITrack extends ITrackCommon {
   artistId: string | null;
   albumId: string | null;
-}
-
-export interface ITrackResponse extends ITrackCommon {
-  artistId: IArtist | null;
-  albumId: IAlbumResponse | null;
 }
 /* track end */
 

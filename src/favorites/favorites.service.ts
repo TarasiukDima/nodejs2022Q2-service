@@ -73,7 +73,7 @@ export class FavoritesService {
     };
   };
 
-  createAlbum = async (id: string) => {
+  createAlbum = async (id: string): Promise<Album | null> => {
     const album = await this.albumService.findOne(id);
 
     if (!album) {
@@ -92,7 +92,7 @@ export class FavoritesService {
     return album;
   };
 
-  removeAlbum = async (id: string) => {
+  removeAlbum = async (id: string): Promise<boolean | null> => {
     const existAlbum = await this.checkIncludeId(
       id,
       FavoritesService.dataBase.albums,
@@ -110,7 +110,7 @@ export class FavoritesService {
     return true;
   };
 
-  createArtist = async (id: string) => {
+  createArtist = async (id: string): Promise<Artist | null> => {
     const artist = await this.artistService.findOne(id);
 
     if (!artist) {
@@ -129,7 +129,7 @@ export class FavoritesService {
     return artist;
   };
 
-  removeArtist = async (id: string) => {
+  removeArtist = async (id: string): Promise<boolean | null> => {
     const existArtist = await this.checkIncludeId(
       id,
       FavoritesService.dataBase.artists,
@@ -147,7 +147,7 @@ export class FavoritesService {
     return true;
   };
 
-  createTrack = async (id: string) => {
+  createTrack = async (id: string): Promise<Track | null> => {
     const track = await this.trackService.findOne(id);
 
     if (!track) {
@@ -166,7 +166,7 @@ export class FavoritesService {
     return track;
   };
 
-  removeTrack = async (id: string) => {
+  removeTrack = async (id: string): Promise<boolean | null> => {
     const existTrack = await this.checkIncludeId(
       id,
       FavoritesService.dataBase.tracks,

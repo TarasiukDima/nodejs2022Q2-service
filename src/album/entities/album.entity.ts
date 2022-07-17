@@ -1,4 +1,4 @@
-import { IAlbum } from '../../types';
+import { IAlbum } from '../../types/index';
 
 export class Album implements IAlbum {
   id: string;

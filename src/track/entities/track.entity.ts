@@ -1,4 +1,4 @@
-import { ITrack } from 'src/types';
+import { ITrack } from '../../types/index';
 
 export class Track implements ITrack {
   id: string;

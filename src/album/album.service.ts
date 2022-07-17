@@ -1,7 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 import { MemoryDB } from '../memoryDB/memoryDB';
-import { ArtistService } from '../artist/artist.service';
 import { TrackService } from '../track/track.service';
 import { FavoritesService } from '../favorites/favorites.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
@@ -13,15 +12,13 @@ export class AlbumService {
   private static memory: MemoryDB<Album> = new MemoryDB<Album>();
 
   constructor(
-    @Inject(forwardRef(() => ArtistService))
-    private artistService: ArtistService,
     @Inject(forwardRef(() => TrackService))
     private trackService: TrackService,
     @Inject(forwardRef(() => FavoritesService))
     private favoritesService: FavoritesService,
   ) {}
 
-  create = async (createAlbumDto: CreateAlbumDto) => {
+  create = async (createAlbumDto: CreateAlbumDto): Promise<Album> => {
     const album = new Album({
       id: v4(),
       name: createAlbumDto.name,
@@ -32,15 +29,18 @@ export class AlbumService {
     return await AlbumService.memory.addItem(album);
   };
 
-  findAll = async () => {
+  findAll = async (): Promise<Array<Album>> => {
     return await AlbumService.memory.getAllItems();
   };
 
-  findOne = async (id: string) => {
+  findOne = async (id: string): Promise<Album | null> => {
     return await AlbumService.memory.getOneItemById(id);
   };
 
-  update = async (id: string, updateAlbumDto: UpdateAlbumDto) => {
+  update = async (
+    id: string,
+    updateAlbumDto: UpdateAlbumDto,
+  ): Promise<Album | null> => {
     const album = await AlbumService.memory.getOneItemById(id);
 
     if (!album) {
@@ -55,7 +55,7 @@ export class AlbumService {
     return await AlbumService.memory.updateItem(id, artistUpdated);
   };
 
-  remove = async (id: string) => {
+  remove = async (id: string): Promise<boolean> => {
     await this.favoritesService.removeAlbum(id);
     await this.trackService.removeAlbumIdLink(id);
 
