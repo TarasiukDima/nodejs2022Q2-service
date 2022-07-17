@@ -53,4 +53,17 @@ export class MemoryDB<T extends { id: string }> {
 
     return true;
   };
+
+  removeItemIdLink = async (id: any, field: keyof T): Promise<void> => {
+    this.array = this.array.map((item) => {
+      if (item[field] === id) {
+        const newItem = { ...item };
+        newItem[field] = null;
+
+        return newItem;
+      }
+
+      return item;
+    });
+  };
 }
