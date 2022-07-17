@@ -244,7 +244,7 @@ paths:
 
     delete:
       tags:
-        - User
+        - Users
       summary: Delete user
       description: Deletes user by ID.
       responses:
