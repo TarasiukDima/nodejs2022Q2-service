@@ -9,6 +9,7 @@
 
 ```
 git clone git@github.com:TarasiukDima/nodejs2022Q2-service.git
+cd nodejs2022Q2-service
 git pull --all
 git checkout develop
 ```
@@ -17,6 +18,12 @@ git checkout develop
 
 ```
 npm install
+```
+
+## Rename
+
+```
+Rename file from .env.default to .env
 ```
 
 ## Running application
