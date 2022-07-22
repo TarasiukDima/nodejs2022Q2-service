@@ -8,13 +8,31 @@
 ## Downloading
 
 ```
-git clone {repository URL}
+git clone git@github.com:TarasiukDima/nodejs2022Q2-service.git
+cd nodejs2022Q2-service
+git pull --all
+```
+- branch rest
+```
+git checkout develop
+```
+- branch docker
+```
+git checkout docker
 ```
 
 ## Installing NPM modules
 
 ```
 npm install
+ or if you have install errors
+npm install --legacy-peer-deps
+```
+
+## Rename
+
+```
+Rename file from .env.default to .env
 ```
 
 ## Running application
@@ -26,6 +44,37 @@ npm start
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
+
+
+## Running application with docker
+
+- Build app
+```
+docker-compose up --build
+```
+
+- Start app
+```
+docker-compose start
+```
+
+- Stop app
+```
+docker-compose down
+```
+
+- Scan app
+```
+docker scan nodejs2022q2-service_musicify-app
+docker scan nodejs2022q2-service_musicify-postgres
+```
+
+- Download images from repo
+```
+docker pull dimatarasiuk/nodejs2022q2-service_musicify:app
+docker pull dimatarasiuk/nodejs2022q2-service_musicify:database
+```
+
 
 ## Testing
 
@@ -70,3 +119,8 @@ npm run format
 Press <kbd>F5</kbd> to debug.
 
 For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+
+
+### Documentation api
+
+http://localhost:4000/doc/
