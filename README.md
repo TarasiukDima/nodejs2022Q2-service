@@ -11,8 +11,6 @@
 git clone git@github.com:TarasiukDima/nodejs2022Q2-service.git
 cd nodejs2022Q2-service
 git pull --all
-git checkout develop - branch rest
-git checkout docker - branch docker
 ```
 - branch rest
 ```
