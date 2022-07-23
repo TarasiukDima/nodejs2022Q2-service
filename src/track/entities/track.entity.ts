@@ -1,4 +1,14 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Album } from 'src/album/entities/album.entity';
+import { Artist } from 'src/artist/entities/artist.entity';
+import { ID_ENTITY_OPTIONS } from 'src/settings/index';
+import { getJoinColumnOptions } from 'src/utils/index';
 import { ITrack } from '../../types/index';
 
 @Entity('tracks')
@@ -9,11 +19,13 @@ export class Track implements ITrack {
   @Column()
   name: string;
 
-  @Column({ nullable: true })
-  artistId: string | null;
-
-  @Column({ nullable: true })
+  @ManyToOne(() => Album, (album) => album.id, ID_ENTITY_OPTIONS)
+  @JoinColumn(getJoinColumnOptions('albumId'))
   albumId: string | null;
+
+  @ManyToOne(() => Artist, (artist) => artist.id, ID_ENTITY_OPTIONS)
+  @JoinColumn(getJoinColumnOptions('artistId'))
+  artistId: string | null;
 
   @Column()
   duration: number;

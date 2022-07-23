@@ -20,8 +20,6 @@ import {
   TYPEORM_USERNAME,
 } from './settings';
 
-console.log(TYPEORM_HOST);
-
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -38,13 +36,12 @@ console.log(TYPEORM_HOST);
       synchronize: true,
       //
 
-      autoLoadEntities: true,
       logging: true,
       retryAttempts: 10,
     }),
-    // AlbumModule,
-    // ArtistModule,
-    // TrackModule,
+    AlbumModule,
+    ArtistModule,
+    TrackModule,
     // FavoritesModule,
     UserModule,
   ],

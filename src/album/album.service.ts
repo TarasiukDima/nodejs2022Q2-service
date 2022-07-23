@@ -1,68 +1,53 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { v4 } from 'uuid';
-import { MemoryDB } from '../memoryDB/memoryDB';
-import { TrackService } from '../track/track.service';
-import { FavoritesService } from '../favorites/favorites.service';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from './entities/album.entity';
 
 @Injectable()
 export class AlbumService {
-  private static memory: MemoryDB<Album> = new MemoryDB<Album>();
-
   constructor(
-    @Inject(forwardRef(() => TrackService))
-    private trackService: TrackService,
-    @Inject(forwardRef(() => FavoritesService))
-    private favoritesService: FavoritesService,
+    @InjectRepository(Album)
+    private albumService: Repository<Album>,
   ) {}
 
   create = async (createAlbumDto: CreateAlbumDto): Promise<Album> => {
-    const album = new Album({
-      id: v4(),
-      name: createAlbumDto.name,
-      year: createAlbumDto.year,
-      artistId: createAlbumDto.artistId || null,
-    });
+    const album = await this.albumService.create(createAlbumDto);
 
-    return await AlbumService.memory.addItem(album);
+    return await this.albumService.save(album);
   };
 
   findAll = async (): Promise<Array<Album>> => {
-    return await AlbumService.memory.getAllItems();
+    return await this.albumService.find();
   };
 
   findOne = async (id: string): Promise<Album | null> => {
-    return await AlbumService.memory.getOneItemById(id);
+    return await this.albumService.findOneBy({ id });
   };
 
   update = async (
     id: string,
     updateAlbumDto: UpdateAlbumDto,
   ): Promise<Album | null> => {
-    const album = await AlbumService.memory.getOneItemById(id);
+    const album = await this.albumService.findOneBy({ id });
 
     if (!album) {
       return null;
     }
 
-    const artistUpdated = new Album({
-      ...album,
-      ...updateAlbumDto,
-    });
+    await this.albumService.update({ id }, updateAlbumDto);
 
-    return await AlbumService.memory.updateItem(id, artistUpdated);
+    return await this.albumService.findOneBy({ id });
   };
 
-  remove = async (id: string): Promise<boolean> => {
-    await this.favoritesService.removeAlbum(id);
-    await this.trackService.removeAlbumIdLink(id);
+  remove = async (id: string): Promise<DeleteResult> => {
+    const album = await this.albumService.findOneBy({ id });
 
-    return await AlbumService.memory.removeItem(id);
-  };
+    if (!album) {
+      return null;
+    }
 
-  removeArtistIdLink = async (id: string): Promise<void> => {
-    await AlbumService.memory.removeItemIdLink(id, 'artistId');
+    return await this.albumService.delete({ id });
   };
 }

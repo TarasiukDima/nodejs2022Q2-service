@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { compare, hash } from 'bcrypt';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -16,11 +15,11 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
 
-  private addHashPassword = async (password: string): Promise<string> => {
+  private addHashPassword = async (password: string) => {
     return hash(password, CRYPT_SALT);
   };
 
-  create = async (createUserDto: CreateUserDto) => {
+  create = async (createUserDto: CreateUserDto): Promise<User> => {
     const user = await this.userRepository.create({
       login: createUserDto.login,
       password: await this.addHashPassword(createUserDto.password),
@@ -29,19 +28,22 @@ export class UserService {
     return await this.userRepository.save(user);
   };
 
-  findAll = async () => {
+  findAll = async (): Promise<Array<User>> => {
     return await this.userRepository.find();
   };
 
-  findByLogin = async (login: string) => {
+  findByLogin = async (login: string): Promise<User> => {
     return await this.userRepository.findOneBy({ login });
   };
 
-  findOne = async (id: string) => {
+  findOne = async (id: string): Promise<User> => {
     return await this.userRepository.findOneBy({ id });
   };
 
-  update = async (id: string, updateUserDto: UpdateUserDto) => {
+  update = async (
+    id: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User | string> => {
     const user = await this.userRepository.findOneBy({ id });
     if (!user) {
       return null;
@@ -62,10 +64,10 @@ export class UserService {
 
     await this.userRepository.update({ id }, userUpdated);
 
-    return this.userRepository.findOneBy({ id });
+    return await this.userRepository.findOneBy({ id });
   };
 
-  remove = async (id: string) => {
+  remove = async (id: string): Promise<DeleteResult> => {
     const user = await this.userRepository.findOneBy({ id });
 
     if (!user) {
