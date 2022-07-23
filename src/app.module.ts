@@ -14,21 +14,25 @@ import { Favorite } from './favorites/entities/favorite.entity';
 import { Track } from './track/entities/track.entity';
 import {
   TYPEORM_DATABASE,
+  TYPEORM_HOST,
   TYPEORM_PASSWORD,
   TYPEORM_PORT,
   TYPEORM_USERNAME,
 } from './settings';
 
+console.log(TYPEORM_HOST);
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
+      host: TYPEORM_HOST,
       port: TYPEORM_PORT,
       username: TYPEORM_USERNAME,
       password: TYPEORM_PASSWORD,
       database: TYPEORM_DATABASE,
-      entities: [Album, Artist, Favorite, Track, User],
+      // entities: [Album, Artist, Favorite, Track, User],
+      entities: [Album, Artist, Track, User],
 
       // TODO: REMOVE IN THE END!!!!!!!!!!!!!!!!!!!
       synchronize: true,
@@ -38,10 +42,10 @@ import {
       logging: true,
       retryAttempts: 10,
     }),
-    AlbumModule,
-    ArtistModule,
-    TrackModule,
-    FavoritesModule,
+    // AlbumModule,
+    // ArtistModule,
+    // TrackModule,
+    // FavoritesModule,
     UserModule,
   ],
   controllers: [AppController],

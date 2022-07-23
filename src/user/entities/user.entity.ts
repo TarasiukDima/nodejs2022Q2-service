@@ -36,8 +36,8 @@ export class User implements IUser {
   })
   updatedAt: number;
 
-  @Column()
   @Exclude()
+  @Column()
   password: string;
 
   constructor(userInfo: Partial<User>) {

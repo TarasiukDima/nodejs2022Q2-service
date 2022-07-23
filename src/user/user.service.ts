@@ -1,49 +1,48 @@
 import { Injectable } from '@nestjs/common';
 import { compare, hash } from 'bcrypt';
-import { v4 } from 'uuid';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { MemoryDB } from '../memoryDB/memoryDB';
 import { CRYPT_SALT } from '../settings';
 import { USER_MESSAGES } from '../settings/messages';
 
 @Injectable()
 export class UserService {
-  private memory: MemoryDB<User> = new MemoryDB<User>();
+  constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+  ) {}
 
   private addHashPassword = async (password: string): Promise<string> => {
     return hash(password, CRYPT_SALT);
   };
 
   create = async (createUserDto: CreateUserDto) => {
-    const now = Date.now();
-    const userInfo = new User({
-      id: v4(),
+    const user = await this.userRepository.create({
       login: createUserDto.login,
       password: await this.addHashPassword(createUserDto.password),
-      version: 1,
-      createdAt: now,
-      updatedAt: now,
     });
 
-    return await this.memory.addItem(userInfo);
+    return await this.userRepository.save(user);
   };
 
   findAll = async () => {
-    return await this.memory.getAllItems();
+    return await this.userRepository.find();
   };
 
   findByLogin = async (login: string) => {
-    return await this.memory.getOneItemByField(login, 'login');
+    return await this.userRepository.findOneBy({ login });
   };
 
   findOne = async (id: string) => {
-    return await this.memory.getOneItemById(id);
+    return await this.userRepository.findOneBy({ id });
   };
 
   update = async (id: string, updateUserDto: UpdateUserDto) => {
-    const user = await this.memory.getOneItemById(id);
+    const user = await this.userRepository.findOneBy({ id });
     if (!user) {
       return null;
     }
@@ -57,17 +56,22 @@ export class UserService {
       return USER_MESSAGES.wrongOldPassword;
     }
 
-    const userUpdated = new User({
-      ...user,
+    const userUpdated = {
       password: await this.addHashPassword(updateUserDto.newPassword),
-      version: user.version + 1,
-      updatedAt: Date.now(),
-    });
+    };
 
-    return await this.memory.updateItem(id, userUpdated);
+    await this.userRepository.update({ id }, userUpdated);
+
+    return this.userRepository.findOneBy({ id });
   };
 
   remove = async (id: string) => {
-    return await this.memory.removeItem(id);
+    const user = await this.userRepository.findOneBy({ id });
+
+    if (!user) {
+      return null;
+    }
+
+    return await this.userRepository.delete({ id });
   };
 }

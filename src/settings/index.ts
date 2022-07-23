@@ -12,6 +12,7 @@ export const TOKEN_REFRESH_EXPIRE_TIME =
 export const VERSION_UUID = '4';
 
 export const TYPEORM_PORT = +process.env.POSTGRES_PORT || 5432;
+export const TYPEORM_HOST = process.env.POSTGRES_HOST || 'localhost';
 export const TYPEORM_DATABASE = process.env.POSTGRES_DB || 'POSTGRES_DB';
 export const TYPEORM_USERNAME = process.env.POSTGRES_USER || 'POSTGRES_USER';
 export const TYPEORM_PASSWORD =
