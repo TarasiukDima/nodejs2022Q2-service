@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AlbumModule } from './album/album.module';
@@ -6,7 +7,6 @@ import { ArtistModule } from './artist/artist.module';
 import { TrackModule } from './track/track.module';
 import { FavoritesModule } from './favorites/favorites.module';
 import { UserModule } from './user/user.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entities/user.entity';
 import { Album } from './album/entities/album.entity';
 import { Artist } from './artist/entities/artist.entity';
@@ -29,8 +29,7 @@ import {
       username: TYPEORM_USERNAME,
       password: TYPEORM_PASSWORD,
       database: TYPEORM_DATABASE,
-      // entities: [Album, Artist, Favorite, Track, User],
-      entities: [Album, Artist, Track, User],
+      entities: [Album, Artist, Favorite, Track, User],
 
       // TODO: REMOVE IN THE END!!!!!!!!!!!!!!!!!!!
       synchronize: true,
@@ -42,7 +41,7 @@ import {
     AlbumModule,
     ArtistModule,
     TrackModule,
-    // FavoritesModule,
+    FavoritesModule,
     UserModule,
   ],
   controllers: [AppController],

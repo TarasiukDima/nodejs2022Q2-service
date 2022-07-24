@@ -15,6 +15,9 @@ export const ID_ENTITY_OPTIONS = {
   onDelete: 'SET NULL',
   nullable: true,
 } as RelationOptions;
+export const FAVORITES_ENTITY_OPTIONS = {
+  eager: true,
+} as RelationOptions;
 
 export const TYPEORM_PORT = +process.env.POSTGRES_PORT || 5432;
 export const TYPEORM_HOST = process.env.POSTGRES_HOST || 'localhost';

@@ -27,13 +27,8 @@ export interface IArtist {
 
 /* favorites start */
 export interface IFavorites {
-  artists: Array<string>; // ids
-  albums: Array<string>; // ids
-  tracks: Array<string>; // ids
-}
-export interface IFavoritesResponse {
-  artists: Array<IArtist>;
   albums: Array<IAlbum>;
+  artists: Array<IArtist>;
   tracks: Array<ITrack>;
 }
 /* favorites end */

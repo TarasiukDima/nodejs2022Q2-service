@@ -1,185 +1,161 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Album } from '../album/entities/album.entity';
 import { Artist } from '../artist/entities/artist.entity';
 import { Track } from '../track/entities/track.entity';
-import { AlbumService } from '../album/album.service';
-import { ArtistService } from '../artist/artist.service';
-import { TrackService } from '../track/track.service';
 import { Favorite } from './entities/favorite.entity';
-import { IFavoritesResponse } from '../types';
 
 @Injectable()
 export class FavoritesService {
-  private static dataBase: Favorite = {
-    artists: [],
-    albums: [],
-    tracks: [],
-  };
-
   constructor(
-    @Inject(forwardRef(() => ArtistService))
-    private artistService: ArtistService,
-    @Inject(forwardRef(() => AlbumService))
-    private albumService: AlbumService,
-    @Inject(forwardRef(() => TrackService))
-    private trackService: TrackService,
+    @InjectRepository(Album)
+    private albumRepository: Repository<Album>,
+    @InjectRepository(Artist)
+    private artistRepository: Repository<Artist>,
+    @InjectRepository(Track)
+    private trackRepository: Repository<Track>,
+    @InjectRepository(Favorite)
+    private favoriteRepository: Repository<Favorite>,
   ) {}
 
   private filterArray = async (
     idForExclude: string,
-    array: Array<string>,
-  ): Promise<Array<string>> => {
-    return [...array].filter((oneItem) => oneItem !== idForExclude);
+    array: Array<Album | Artist | Track>,
+  ): Promise<Array<Album | Artist | Track>> => {
+    return [...array].filter((oneItem) => oneItem.id !== idForExclude);
   };
 
   private checkIncludeId = async (
     id: string,
-    array: Array<string>,
+    array: Array<Album | Artist | Track>,
   ): Promise<boolean> => {
-    return array.includes(id);
+    return array.reduce((acc, oneItem) => {
+      if (oneItem.id === id) {
+        return true;
+      }
+      return acc;
+    }, false);
   };
 
-  private async gelItemsFromAnswer<T>(
-    array: Array<PromiseSettledResult<T>>,
-  ): Promise<Array<T>> {
-    const arr = array.map((item) =>
-      item.status === 'fulfilled' ? item.value : null,
-    );
+  findAll = async (): Promise<Favorite> => {
+    const favorites = await this.favoriteRepository.find({
+      relations: {
+        artists: true,
+        albums: true,
+        tracks: true,
+      },
+    });
 
-    return arr.filter((item) => item);
-  }
-
-  findAll = async (): Promise<IFavoritesResponse> => {
-    const artists = await Promise.allSettled(
-      FavoritesService.dataBase.artists.map((artistId) =>
-        this.artistService.findOne(artistId),
-      ),
-    );
-    const albums = await Promise.allSettled(
-      FavoritesService.dataBase.albums.map((albumId) =>
-        this.albumService.findOne(albumId),
-      ),
-    );
-    const tracks = await Promise.allSettled(
-      FavoritesService.dataBase.tracks.map((trackId) =>
-        this.trackService.findOne(trackId),
-      ),
-    );
-
-    return {
-      artists: await this.gelItemsFromAnswer<Artist>(artists),
-      albums: await this.gelItemsFromAnswer<Album>(albums),
-      tracks: await this.gelItemsFromAnswer<Track>(tracks),
-    };
+    return favorites.length === 0
+      ? await this.favoriteRepository.save({
+          albums: [],
+          artists: [],
+          tracks: [],
+        })
+      : favorites[0];
   };
 
   createAlbum = async (id: string): Promise<Album | null> => {
-    const album = await this.albumService.findOne(id);
+    const album = await this.albumRepository.findOneBy({ id });
 
     if (!album) {
       return null;
     }
 
-    const existAlbum = await this.checkIncludeId(
-      id,
-      FavoritesService.dataBase.albums,
-    );
+    const favorites = await this.findAll();
+    const existAlbum = await this.checkIncludeId(id, favorites.albums);
 
     if (!existAlbum) {
-      FavoritesService.dataBase.albums.push(id);
+      favorites.albums.push(album);
+      await this.favoriteRepository.save(favorites);
     }
-
     return album;
   };
 
   removeAlbum = async (id: string): Promise<boolean | null> => {
-    const existAlbum = await this.checkIncludeId(
-      id,
-      FavoritesService.dataBase.albums,
-    );
+    const favorites = await this.findAll();
+    const existAlbum = await this.checkIncludeId(id, favorites.albums);
 
     if (!existAlbum) {
       return null;
     }
 
-    FavoritesService.dataBase.albums = await this.filterArray(
+    favorites.albums = (await this.filterArray(
       id,
-      FavoritesService.dataBase.albums,
-    );
+      favorites.albums,
+    )) as Array<Album>;
+    await this.favoriteRepository.save(favorites);
 
     return true;
   };
 
   createArtist = async (id: string): Promise<Artist | null> => {
-    const artist = await this.artistService.findOne(id);
+    const artist = await this.artistRepository.findOneBy({ id });
 
     if (!artist) {
       return null;
     }
 
-    const existArtist = await this.checkIncludeId(
-      id,
-      FavoritesService.dataBase.artists,
-    );
+    const favorites = await this.findAll();
+    const existArtist = await this.checkIncludeId(id, favorites.artists);
 
     if (!existArtist) {
-      FavoritesService.dataBase.artists.push(id);
+      favorites.artists.push(artist);
+      await this.favoriteRepository.save(favorites);
     }
 
     return artist;
   };
 
   removeArtist = async (id: string): Promise<boolean | null> => {
-    const existArtist = await this.checkIncludeId(
-      id,
-      FavoritesService.dataBase.artists,
-    );
+    const favorites = await this.findAll();
+    const existArtist = await this.checkIncludeId(id, favorites.artists);
 
     if (!existArtist) {
       return null;
     }
 
-    FavoritesService.dataBase.artists = await this.filterArray(
+    favorites.artists = (await this.filterArray(
       id,
-      FavoritesService.dataBase.artists,
-    );
+      favorites.artists,
+    )) as Array<Artist>;
+    await this.favoriteRepository.save(favorites);
 
     return true;
   };
 
   createTrack = async (id: string): Promise<Track | null> => {
-    const track = await this.trackService.findOne(id);
+    const track = await this.trackRepository.findOneBy({ id });
 
     if (!track) {
       return null;
     }
 
-    const existTrack = await this.checkIncludeId(
-      id,
-      FavoritesService.dataBase.tracks,
-    );
+    const favorites = await this.findAll();
+    const existTrack = await this.checkIncludeId(id, favorites.tracks);
 
     if (!existTrack) {
-      FavoritesService.dataBase.tracks.push(id);
+      favorites.tracks.push(track);
+      await this.favoriteRepository.save(favorites);
     }
 
     return track;
   };
 
   removeTrack = async (id: string): Promise<boolean | null> => {
-    const existTrack = await this.checkIncludeId(
-      id,
-      FavoritesService.dataBase.tracks,
-    );
+    const favorites = await this.findAll();
+    const existTrack = await this.checkIncludeId(id, favorites.tracks);
 
     if (!existTrack) {
       return null;
     }
 
-    FavoritesService.dataBase.tracks = await this.filterArray(
+    favorites.tracks = (await this.filterArray(
       id,
-      FavoritesService.dataBase.tracks,
-    );
+      favorites.tracks,
+    )) as Array<Track>;
+    await this.favoriteRepository.save(favorites);
 
     return true;
   };
