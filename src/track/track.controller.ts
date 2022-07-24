@@ -72,6 +72,7 @@ export class TrackController {
     if (!updatedTrack) {
       throw new NotFoundException(TRACK_MESSAGES.notFound);
     }
+
     return updatedTrack;
   }
 

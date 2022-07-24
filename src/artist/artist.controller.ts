@@ -71,6 +71,7 @@ export class ArtistController {
     if (!updatedArtist) {
       throw new NotFoundException(ARTIST_MESSAGES.notFound);
     }
+
     return updatedArtist;
   }
 

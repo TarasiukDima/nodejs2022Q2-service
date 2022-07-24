@@ -72,6 +72,7 @@ export class AlbumController {
     if (!updatedAlbum) {
       throw new NotFoundException(ALBUM_MESSAGES.notFound);
     }
+
     return updatedAlbum;
   }
 
