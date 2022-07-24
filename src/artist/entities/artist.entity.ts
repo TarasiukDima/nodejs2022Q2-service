@@ -12,7 +12,7 @@ export class Artist implements IArtist {
   @Column({ default: false })
   grammy: boolean;
 
-  constructor(userInfo: Partial<Artist>) {
-    Object.assign(this, userInfo);
+  constructor(artistInfo: Partial<Artist>) {
+    Object.assign(this, artistInfo);
   }
 }

@@ -19,18 +19,24 @@ export class Track implements ITrack {
   @Column()
   name: string;
 
+  @Column({ nullable: true })
+  albumId: string | null;
+
   @ManyToOne(() => Album, (album) => album.id, ID_ENTITY_OPTIONS)
   @JoinColumn(getJoinColumnOptions('albumId'))
-  albumId: string | null;
+  album: string | null;
+
+  @Column({ nullable: true })
+  artistId: string | null;
 
   @ManyToOne(() => Artist, (artist) => artist.id, ID_ENTITY_OPTIONS)
   @JoinColumn(getJoinColumnOptions('artistId'))
-  artistId: string | null;
+  artist: string | null;
 
   @Column()
   duration: number;
 
-  constructor(userInfo: Partial<Track>) {
-    Object.assign(this, userInfo);
+  constructor(trackInfo: Partial<Track>) {
+    Object.assign(this, trackInfo);
   }
 }

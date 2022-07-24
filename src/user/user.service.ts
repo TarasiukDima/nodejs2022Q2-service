@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { CRYPT_SALT } from '../settings';
+import { CRYPT_SALT } from '../settings/index';
 import { USER_MESSAGES } from '../settings/messages';
 
 @Injectable()

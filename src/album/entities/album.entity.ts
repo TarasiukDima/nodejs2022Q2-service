@@ -21,11 +21,14 @@ export class Album implements IAlbum {
   @Column()
   year: number;
 
-  @ManyToOne(() => Artist, (artist) => artist.id, ID_ENTITY_OPTIONS)
-  @JoinColumn(getJoinColumnOptions('artistId'))
+  @Column({ nullable: true })
   artistId: string | null;
 
-  constructor(userInfo: Partial<Album>) {
-    Object.assign(this, userInfo);
+  @ManyToOne(() => Artist, (artist) => artist.id, ID_ENTITY_OPTIONS)
+  @JoinColumn(getJoinColumnOptions('artistId'))
+  artist: string | null;
+
+  constructor(albumInfo: Partial<Album>) {
+    Object.assign(this, albumInfo);
   }
 }
