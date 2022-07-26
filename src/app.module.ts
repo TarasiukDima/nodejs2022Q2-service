@@ -7,37 +7,11 @@ import { ArtistModule } from './artist/artist.module';
 import { TrackModule } from './track/track.module';
 import { FavoritesModule } from './favorites/favorites.module';
 import { UserModule } from './user/user.module';
-import { User } from './user/entities/user.entity';
-import { Album } from './album/entities/album.entity';
-import { Artist } from './artist/entities/artist.entity';
-import { Favorite } from './favorites/entities/favorite.entity';
-import { Track } from './track/entities/track.entity';
-import {
-  TYPEORM_DATABASE,
-  TYPEORM_HOST,
-  TYPEORM_PASSWORD,
-  TYPEORM_PORT,
-  TYPEORM_USERNAME,
-} from './settings';
+import { typeormConfig } from './ormconfig';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: TYPEORM_HOST,
-      port: TYPEORM_PORT,
-      username: TYPEORM_USERNAME,
-      password: TYPEORM_PASSWORD,
-      database: TYPEORM_DATABASE,
-      entities: [Album, Artist, Favorite, Track, User],
-
-      // TODO: REMOVE IN THE END!!!!!!!!!!!!!!!!!!!
-      synchronize: true,
-      //
-
-      logging: true,
-      retryAttempts: 10,
-    }),
+    TypeOrmModule.forRoot(typeormConfig),
     AlbumModule,
     ArtistModule,
     TrackModule,
