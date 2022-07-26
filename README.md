@@ -20,6 +20,10 @@ git checkout develop
 ```
 git checkout docker
 ```
+- branch typeorm
+```
+git checkout postgresql
+```
 
 ## Installing NPM modules
 
@@ -29,11 +33,10 @@ npm install
 npm install --legacy-peer-deps
 ```
 
-## Rename
+## Important info!
 
-```
-Rename file from .env.default to .env
-```
+-Rename file from .env.default to .env
+-**For work docker compose file need clear or remove folder src/migration**, migration start from Dockerfile.
 
 ## Running application
 
@@ -73,6 +76,28 @@ docker scan nodejs2022q2-service_musicify-postgres
 ```
 docker pull dimatarasiuk/nodejs2022q2-service_musicify:app
 docker pull dimatarasiuk/nodejs2022q2-service_musicify:database
+```
+
+## Typeorm migrations
+
+- Create clear migration file
+```
+npm run migration:create
+```
+
+- Generate migration file
+```
+npm run migration:generate
+```
+
+- Update db with migration file
+```
+npm run migration:run
+```
+
+- To revert the last migration
+```
+npm run migration:down
 ```
 
 
