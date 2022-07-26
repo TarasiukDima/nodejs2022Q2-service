@@ -35,8 +35,8 @@ npm install --legacy-peer-deps
 
 ## Important info!
 
--Rename file from .env.default to .env
--**For work docker compose file need clear or remove folder src/migration**, migration start from Dockerfile.
+- Rename file from .env.default to .env
+- **For work docker compose file need clear or remove folder src/migration**, migration start from Dockerfile.
 
 ## Running application
 
