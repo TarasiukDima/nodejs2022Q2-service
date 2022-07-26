@@ -15,14 +15,14 @@ export const commonOptions = {
   username: TYPEORM_USERNAME,
   password: TYPEORM_PASSWORD,
   database: TYPEORM_DATABASE,
-  migrationsRun: true,
+  migrationsRun: false,
   synchronize: false,
   logging: true,
 };
 
 export const dataSourceConfig = {
   ...commonOptions,
-  entities: ['dist/**/entities/*.entity.{ts,js}'],
+  entities: ['dist/**/entities/*.entity.js'],
   migrations: ['src/migration/*.{ts,js}'],
 } as DataSourceOptions;
 
