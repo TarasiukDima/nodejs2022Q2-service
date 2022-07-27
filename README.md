@@ -24,6 +24,10 @@ git checkout docker
 ```
 git checkout postgresql
 ```
+- branch authorization
+```
+git checkout authorization
+```
 
 ## Installing NPM modules
 
