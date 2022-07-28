@@ -9,6 +9,8 @@ import { FavoritesModule } from './favorites/favorites.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { typeormConfig } from './ormconfig';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/quards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -21,6 +23,12 @@ import { typeormConfig } from './ormconfig';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}

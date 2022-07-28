@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JWT_SECRET_REFRESH_KEY } from '../../settings/index';
 import { UserService } from '../../user/user.service';
-import { AUTH_MESSAGES } from 'src/settings/messages';
+import { AUTH_MESSAGES } from '../../settings/messages';
 import { IJWTStrategyToken } from '../../types/index';
 
 @Injectable()

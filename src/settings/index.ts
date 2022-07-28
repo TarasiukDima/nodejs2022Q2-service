@@ -25,3 +25,5 @@ export const TYPEORM_DATABASE = process.env.POSTGRES_DB || 'POSTGRES_DB';
 export const TYPEORM_USERNAME = process.env.POSTGRES_USER || 'POSTGRES_USER';
 export const TYPEORM_PASSWORD =
   process.env.POSTGRES_PASSWORD || 'POSTGRES_PASSWORD';
+
+export const IS_PUBLIC_KEY = 'isPublic';

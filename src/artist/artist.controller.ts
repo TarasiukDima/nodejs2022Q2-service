@@ -9,13 +9,11 @@ import {
   HttpCode,
   ParseUUIDPipe,
   NotFoundException,
-  UseGuards,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
-import { JwtAuthGuard } from '../auth/quards/jwt-auth.guard';
 import { ARTIST_MESSAGES } from '../settings/messages';
 import { VERSION_UUID } from '../settings/index';
 
@@ -23,21 +21,18 @@ import { VERSION_UUID } from '../settings/index';
 export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   @HttpCode(StatusCodes.CREATED)
   async create(@Body() createArtistDto: CreateArtistDto) {
     return await this.artistService.create(createArtistDto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get()
   @HttpCode(StatusCodes.OK)
   async findAll() {
     return await this.artistService.findAll();
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   @HttpCode(StatusCodes.OK)
   async findOne(
@@ -59,7 +54,6 @@ export class ArtistController {
     return artist;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Put(':id')
   async update(
     @Param(
@@ -81,7 +75,6 @@ export class ArtistController {
     return updatedArtist;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @HttpCode(StatusCodes.NO_CONTENT)
   async remove(

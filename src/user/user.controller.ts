@@ -10,13 +10,11 @@ import {
   NotFoundException,
   ParseUUIDPipe,
   ForbiddenException,
-  UseGuards,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { JwtAuthGuard } from '../auth/quards/jwt-auth.guard';
 import { USER_MESSAGES } from '../settings/messages';
 import { VERSION_UUID } from '../settings/index';
 
@@ -24,21 +22,18 @@ import { VERSION_UUID } from '../settings/index';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   @HttpCode(StatusCodes.CREATED)
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.userService.create(createUserDto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get()
   @HttpCode(StatusCodes.OK)
   async findAll() {
     return await this.userService.findAll();
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   @HttpCode(StatusCodes.OK)
   async findOne(
@@ -60,7 +55,6 @@ export class UserController {
     return user;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Put(':id')
   @HttpCode(StatusCodes.OK)
   async update(
@@ -90,7 +84,6 @@ export class UserController {
     return updatedUser;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @HttpCode(StatusCodes.NO_CONTENT)
   async remove(
