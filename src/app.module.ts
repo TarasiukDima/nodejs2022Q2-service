@@ -7,6 +7,7 @@ import { ArtistModule } from './artist/artist.module';
 import { TrackModule } from './track/track.module';
 import { FavoritesModule } from './favorites/favorites.module';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 import { typeormConfig } from './ormconfig';
 
 @Module({
@@ -17,6 +18,7 @@ import { typeormConfig } from './ormconfig';
     TrackModule,
     FavoritesModule,
     UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

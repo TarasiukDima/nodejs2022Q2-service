@@ -8,22 +8,26 @@ import {
   HttpCode,
   NotFoundException,
   UnprocessableEntityException,
+  UseGuards,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
-import { FAVORITES_MESSAGES } from 'src/settings/messages';
-import { VERSION_UUID } from '../settings/index';
 import { FavoritesService } from './favorites.service';
+import { JwtAuthGuard } from '../auth/quards/jwt-auth.guard';
+import { FAVORITES_MESSAGES } from '../settings/messages';
+import { VERSION_UUID } from '../settings/index';
 
 @Controller('favs')
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   @HttpCode(StatusCodes.OK)
   async findAll() {
     return await this.favoritesService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('album/:id')
   @HttpCode(StatusCodes.CREATED)
   async createAlbum(
@@ -44,6 +48,7 @@ export class FavoritesController {
     return album;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete('album/:id')
   @HttpCode(StatusCodes.NO_CONTENT)
   async removeAlbum(
@@ -65,6 +70,7 @@ export class FavoritesController {
     return album;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('artist/:id')
   @HttpCode(StatusCodes.CREATED)
   async createArtist(
@@ -85,6 +91,7 @@ export class FavoritesController {
     return artist;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete('artist/:id')
   @HttpCode(StatusCodes.NO_CONTENT)
   async removeArtist(
@@ -106,6 +113,7 @@ export class FavoritesController {
     return artist;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('track/:id')
   @HttpCode(StatusCodes.CREATED)
   async createTrack(
@@ -126,6 +134,7 @@ export class FavoritesController {
     return track;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete('track/:id')
   @HttpCode(StatusCodes.NO_CONTENT)
   async removeTrack(

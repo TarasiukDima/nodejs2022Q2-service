@@ -9,11 +9,13 @@ import {
   ParseUUIDPipe,
   HttpCode,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
+import { JwtAuthGuard } from '../auth/quards/jwt-auth.guard';
 import { VERSION_UUID } from '../settings/index';
 import { ALBUM_MESSAGES } from '../settings/messages';
 
@@ -21,18 +23,21 @@ import { ALBUM_MESSAGES } from '../settings/messages';
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   @HttpCode(StatusCodes.CREATED)
   async create(@Body() createAlbumDto: CreateAlbumDto) {
     return await this.albumService.create(createAlbumDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   @HttpCode(StatusCodes.OK)
   async findAll() {
     return await this.albumService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   @HttpCode(StatusCodes.OK)
   async findOne(
@@ -54,6 +59,7 @@ export class AlbumController {
     return album;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
   @HttpCode(StatusCodes.OK)
   async update(
@@ -76,6 +82,7 @@ export class AlbumController {
     return updatedAlbum;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @HttpCode(StatusCodes.NO_CONTENT)
   async remove(
