@@ -6,8 +6,8 @@ import { UserService } from '../user/user.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RefreshUserDto } from './dto/refresh-token.dto';
-import { ITokenAnswer } from 'src/types';
-import { TOKEN_REFRESH_EXPIRE_TIME } from 'src/settings';
+import { ICreateJwTToken, IJWTData, ITokenAnswer } from '../types/index';
+import { TOKEN_REFRESH_EXPIRE_TIME } from '../settings/index';
 
 @Injectable()
 export class AuthService {
@@ -17,13 +17,37 @@ export class AuthService {
   ) {}
 
   private generateToken = async (
-    id: string,
-    login: string,
+    data: ICreateJwTToken,
     options?: JwtSignOptions,
   ): Promise<string> => {
-    const token = this.jwtService.sign({ id, login }, options);
+    const token = this.jwtService.sign(data, options);
 
     return token;
+  };
+
+  private getTokens = async (data: ICreateJwTToken): Promise<ITokenAnswer> => {
+    const user = { id: data.id, login: data.login };
+    return {
+      token: await this.generateToken(user),
+      refreshToken: await this.generateToken(
+        { ...user, isRefresh: true },
+        { expiresIn: TOKEN_REFRESH_EXPIRE_TIME },
+      ),
+    };
+  };
+
+  private decodeTokenData = async (
+    token: string,
+  ): Promise<IJWTData | boolean> => {
+    try {
+      const jwtData: IJWTData = await this.jwtService.verifyAsync(token, {
+        maxAge: TOKEN_REFRESH_EXPIRE_TIME,
+      });
+
+      return jwtData;
+    } catch (e) {
+      return false;
+    }
   };
 
   private validateUser = async (
@@ -55,15 +79,25 @@ export class AuthService {
       return null;
     }
 
-    return {
-      token: await this.generateToken(user.id, user.login),
-      refreshToken: await this.generateToken(user.id, user.login, {
-        expiresIn: TOKEN_REFRESH_EXPIRE_TIME,
-      }),
-    };
+    return await this.getTokens({ id: user.id, login: user.login });
   };
 
-  refresh = async (refreshUserDto: RefreshUserDto) => {
-    return 'refresh';
+  refresh = async (
+    refreshUserDto: RefreshUserDto,
+  ): Promise<ITokenAnswer | null> => {
+    const tokenObj = await this.decodeTokenData(refreshUserDto.refreshToken);
+
+    if (!tokenObj) {
+      return null;
+    }
+
+    const { id, login, isRefresh = false } = tokenObj as IJWTData;
+    const user = await this.usersService.findByLogin(login);
+
+    if (!user || user.id !== id || !isRefresh) {
+      return null;
+    }
+
+    return await this.getTokens({ id: user.id, login: user.login });
   };
 }

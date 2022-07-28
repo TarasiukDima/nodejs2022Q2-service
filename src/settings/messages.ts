@@ -29,5 +29,6 @@ export enum AUTH_MESSAGES {
   createUser = 'User created success',
   notFoundUser = 'No user with such login, password',
   notFoundUserToken = 'No user with such login or id from token',
+  invalidRefreshToken = 'Refresh token is invalid or expired',
   notAuthorization = 'User not authorization',
 }

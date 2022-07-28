@@ -44,6 +44,10 @@ export class AuthController {
   async refresh(@Body() refreshUserDto: RefreshUserDto) {
     const newJwt = await this.authService.refresh(refreshUserDto);
 
+    if (!newJwt) {
+      throw new ForbiddenException(AUTH_MESSAGES.invalidRefreshToken);
+    }
+
     //Server should answer with status code 200 and tokens in body if dto is valid
     // Server should answer with status code 401 and corresponding message if dto is invalid (no refreshToken in body)
     // Server should answer with status code 403 and corresponding message if authentication failed(Refresh token is invalid or expired)

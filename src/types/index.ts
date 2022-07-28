@@ -45,9 +45,20 @@ export interface IUser {
 /* user end */
 
 /* authorization start */
-export interface IJWTToken {
+export interface ILoginUserData {
+  login: string;
+  password: string;
+}
+
+export interface IJWTStrategyToken {
   id: string;
   login: string;
+}
+
+export interface ICreateJwTToken {
+  id: string;
+  login: string;
+  isRefresh?: boolean;
 }
 
 export interface ITokenAnswer {
@@ -55,8 +66,11 @@ export interface ITokenAnswer {
   refreshToken: string;
 }
 
-export interface ILoginUserData {
+export interface IJWTData {
+  id: string;
   login: string;
-  password: string;
+  iat: number;
+  exp: number;
+  isRefresh?: boolean;
 }
 /* authorization end */

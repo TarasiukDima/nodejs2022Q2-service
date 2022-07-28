@@ -4,7 +4,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JWT_SECRET_REFRESH_KEY } from '../../settings/index';
 import { UserService } from '../../user/user.service';
 import { AUTH_MESSAGES } from 'src/settings/messages';
-import { IJWTToken } from '../../types/index';
+import { IJWTStrategyToken } from '../../types/index';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -16,7 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate({ id, login }: IJWTToken) {
+  async validate({ id, login }: IJWTStrategyToken) {
     const userExist = await this.userService.findByLogin(login);
 
     if (!userExist || userExist.id !== id) {
