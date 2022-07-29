@@ -62,8 +62,8 @@ export interface ICreateJwTToken {
 }
 
 export interface ITokenAnswer {
-  token: string;
-  refreshToken: string;
+  access_token: string;
+  refresh_token: string;
 }
 
 export interface IJWTData {

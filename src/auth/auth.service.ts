@@ -28,8 +28,8 @@ export class AuthService {
   private getTokens = async (data: ICreateJwTToken): Promise<ITokenAnswer> => {
     const user = { id: data.id, login: data.login };
     return {
-      token: await this.generateToken(user),
-      refreshToken: await this.generateToken(
+      access_token: await this.generateToken(user),
+      refresh_token: await this.generateToken(
         { ...user, isRefresh: true },
         { expiresIn: TOKEN_REFRESH_EXPIRE_TIME },
       ),
