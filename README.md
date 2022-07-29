@@ -48,17 +48,17 @@ For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
 ## Running application with docker
 
-- Build app
+- Build and start app
 ```
 docker-compose up --build
 ```
 
-- Start app
+- Start app containers
 ```
 docker-compose start
 ```
 
-- Stop app
+- Stop and remove app containers
 ```
 docker-compose down
 ```
