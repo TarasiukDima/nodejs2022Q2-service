@@ -6,19 +6,36 @@ import { FavoritesService } from '../favorites/favorites.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from './entities/album.entity';
+import { ArtistService } from '../artist/artist.service';
 
 @Injectable()
 export class AlbumService {
   private static memory: MemoryDB<Album> = new MemoryDB<Album>();
 
   constructor(
+    @Inject(forwardRef(() => ArtistService))
+    private artistService: ArtistService,
     @Inject(forwardRef(() => TrackService))
     private trackService: TrackService,
     @Inject(forwardRef(() => FavoritesService))
     private favoritesService: FavoritesService,
   ) {}
 
+  private checkAndMakeCorrectIdArtist = async (
+    options: CreateAlbumDto | UpdateAlbumDto,
+  ): Promise<void> => {
+    const artist = await this.artistService.findOne(options.artistId);
+
+    if (!artist) {
+      options.artistId = null;
+    }
+  };
+
   create = async (createAlbumDto: CreateAlbumDto): Promise<Album> => {
+    if (createAlbumDto.artistId) {
+      await this.checkAndMakeCorrectIdArtist(createAlbumDto);
+    }
+
     const album = new Album({
       id: v4(),
       name: createAlbumDto.name,
@@ -41,6 +58,10 @@ export class AlbumService {
     id: string,
     updateAlbumDto: UpdateAlbumDto,
   ): Promise<Album | null> => {
+    if (updateAlbumDto.artistId) {
+      await this.checkAndMakeCorrectIdArtist(updateAlbumDto);
+    }
+
     const album = await AlbumService.memory.getOneItemById(id);
 
     if (!album) {

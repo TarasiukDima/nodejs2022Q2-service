@@ -5,6 +5,8 @@ import { FavoritesService } from '../favorites/favorites.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './entities/track.entity';
+import { AlbumService } from '../album/album.service';
+import { ArtistService } from '../artist/artist.service';
 
 @Injectable()
 export class TrackService {
@@ -13,9 +15,46 @@ export class TrackService {
   constructor(
     @Inject(forwardRef(() => FavoritesService))
     private favoritesService: FavoritesService,
+    @Inject(forwardRef(() => AlbumService))
+    private albumService: AlbumService,
+    @Inject(forwardRef(() => ArtistService))
+    private artistService: ArtistService,
   ) {}
 
+  private checkAndMakeCorrectIdAlbum = async (
+    options: CreateTrackDto | UpdateTrackDto,
+  ): Promise<void> => {
+    const album = await this.albumService.findOne(options.albumId);
+
+    if (!album) {
+      options.albumId = null;
+    }
+  };
+
+  private checkAndMakeCorrectIdArtist = async (
+    options: CreateTrackDto | UpdateTrackDto,
+  ): Promise<void> => {
+    const artist = await this.artistService.findOne(options.artistId);
+
+    if (!artist) {
+      options.artistId = null;
+    }
+  };
+
+  private checkAndMakeCorrectIds = async (
+    options: CreateTrackDto | UpdateTrackDto,
+  ): Promise<void> => {
+    if (options.albumId) {
+      await this.checkAndMakeCorrectIdAlbum(options);
+    }
+    if (options.artistId) {
+      await this.checkAndMakeCorrectIdArtist(options);
+    }
+  };
+
   create = async (createTrackDto: CreateTrackDto) => {
+    await this.checkAndMakeCorrectIds(createTrackDto);
+
     const track = new Track({
       id: v4(),
       ...createTrackDto,
@@ -35,6 +74,8 @@ export class TrackService {
   };
 
   update = async (id: string, updateTrackDto: UpdateTrackDto) => {
+    await this.checkAndMakeCorrectIds(updateTrackDto);
+
     const track = await TrackService.memory.getOneItemById(id);
 
     if (!track) {
