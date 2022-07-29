@@ -4,15 +4,52 @@ import { DeleteResult, Repository } from 'typeorm';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './entities/track.entity';
+import { AlbumService } from '../album/album.service';
+import { ArtistService } from '../artist/artist.service';
 
 @Injectable()
 export class TrackService {
   constructor(
     @InjectRepository(Track)
     private trackService: Repository<Track>,
+    private albumRepository: AlbumService,
+    private artistService: ArtistService,
   ) {}
 
+  private checkAndMakeCorrectIdAlbum = async (
+    options: CreateTrackDto | UpdateTrackDto,
+  ): Promise<void> => {
+    const album = await this.albumRepository.findOne(options.albumId);
+
+    if (!album) {
+      options.albumId = null;
+    }
+  };
+
+  private checkAndMakeCorrectIdArtist = async (
+    options: CreateTrackDto | UpdateTrackDto,
+  ): Promise<void> => {
+    const artist = await this.artistService.findOne(options.artistId);
+
+    if (!artist) {
+      options.artistId = null;
+    }
+  };
+
+  private checkAndMakeCorrectIds = async (
+    options: CreateTrackDto | UpdateTrackDto,
+  ): Promise<void> => {
+    if (options.albumId) {
+      await this.checkAndMakeCorrectIdAlbum(options);
+    }
+    if (options.artistId) {
+      await this.checkAndMakeCorrectIdArtist(options);
+    }
+  };
+
   create = async (createTrackDto: CreateTrackDto): Promise<Track> => {
+    await this.checkAndMakeCorrectIds(createTrackDto);
+
     const track = await this.trackService.create(createTrackDto);
 
     return await this.trackService.save(track);
@@ -30,6 +67,8 @@ export class TrackService {
     id: string,
     updateTrackDto: UpdateTrackDto,
   ): Promise<Track> => {
+    await this.checkAndMakeCorrectIds(updateTrackDto);
+
     const track = await this.trackService.findOneBy({ id });
 
     if (!track) {
