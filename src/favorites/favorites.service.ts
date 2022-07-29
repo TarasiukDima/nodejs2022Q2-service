@@ -1,22 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Album } from '../album/entities/album.entity';
-import { Artist } from '../artist/entities/artist.entity';
-import { Track } from '../track/entities/track.entity';
 import { Favorite } from './entities/favorite.entity';
+import { Album } from '../album/entities/album.entity';
+import { AlbumService } from '../album/album.service';
+import { Artist } from '../artist/entities/artist.entity';
+import { ArtistService } from '../artist/artist.service';
+import { Track } from '../track/entities/track.entity';
+import { TrackService } from '../track/track.service';
 
 @Injectable()
 export class FavoritesService {
   constructor(
-    @InjectRepository(Album)
-    private albumRepository: Repository<Album>,
-    @InjectRepository(Artist)
-    private artistRepository: Repository<Artist>,
-    @InjectRepository(Track)
-    private trackRepository: Repository<Track>,
     @InjectRepository(Favorite)
     private favoriteRepository: Repository<Favorite>,
+    private albumService: AlbumService,
+    private artistService: ArtistService,
+    private trackService: TrackService,
   ) {}
 
   private filterArray = async (
@@ -57,7 +57,7 @@ export class FavoritesService {
   };
 
   createAlbum = async (id: string): Promise<Album | null> => {
-    const album = await this.albumRepository.findOneBy({ id });
+    const album = await this.albumService.findOne(id);
 
     if (!album) {
       return null;
@@ -91,7 +91,7 @@ export class FavoritesService {
   };
 
   createArtist = async (id: string): Promise<Artist | null> => {
-    const artist = await this.artistRepository.findOneBy({ id });
+    const artist = await this.artistService.findOne(id);
 
     if (!artist) {
       return null;
@@ -126,7 +126,7 @@ export class FavoritesService {
   };
 
   createTrack = async (id: string): Promise<Track | null> => {
-    const track = await this.trackRepository.findOneBy({ id });
+    const track = await this.trackService.findOne(id);
 
     if (!track) {
       return null;

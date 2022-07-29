@@ -5,9 +5,9 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Artist } from 'src/artist/entities/artist.entity';
-import { ID_ENTITY_OPTIONS } from 'src/settings/index';
-import { getJoinColumnOptions } from 'src/utils/index';
+import { Artist } from '../../artist/entities/artist.entity';
+import { ID_ENTITY_OPTIONS } from '../../settings/index';
+import { getJoinColumnOptions } from '../../utils/index';
 import { IAlbum } from '../../types/index';
 
 @Entity('albums')

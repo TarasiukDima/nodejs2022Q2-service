@@ -6,10 +6,10 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
-import { CreateUserDto } from '../user/dto/create-user.dto';
+import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RefreshUserDto } from './dto/refresh-token.dto';
-import { AuthService } from './auth.service';
+import { CreateUserDto } from '../user/dto/create-user.dto';
 import { AUTH_MESSAGES } from '../settings/messages';
 import { Public } from '../decorators/index';
 

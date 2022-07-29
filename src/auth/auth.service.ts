@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
+import { LoginUserDto } from './dto/login-user.dto';
+import { RefreshUserDto } from './dto/refresh-token.dto';
 import { User } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
-import { LoginUserDto } from './dto/login-user.dto';
-import { RefreshUserDto } from './dto/refresh-token.dto';
 import { ICreateJwTToken, IJWTData, ITokenAnswer } from '../types/index';
 import { TOKEN_REFRESH_EXPIRE_TIME } from '../settings/index';
 
@@ -28,8 +28,8 @@ export class AuthService {
   private getTokens = async (data: ICreateJwTToken): Promise<ITokenAnswer> => {
     const user = { id: data.id, login: data.login };
     return {
-      access_token: await this.generateToken(user),
-      refresh_token: await this.generateToken(
+      accessToken: await this.generateToken(user),
+      refreshToken: await this.generateToken(
         { ...user, isRefresh: true },
         { expiresIn: TOKEN_REFRESH_EXPIRE_TIME },
       ),

@@ -5,10 +5,10 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Album } from 'src/album/entities/album.entity';
-import { Artist } from 'src/artist/entities/artist.entity';
-import { ID_ENTITY_OPTIONS } from 'src/settings/index';
-import { getJoinColumnOptions } from 'src/utils/index';
+import { Album } from '../../album/entities/album.entity';
+import { Artist } from '../../artist/entities/artist.entity';
+import { ID_ENTITY_OPTIONS } from '../../settings/index';
+import { getJoinColumnOptions } from '../../utils/index';
 import { ITrack } from '../../types/index';
 
 @Entity('tracks')

@@ -4,10 +4,10 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
+import { JwtStrategy } from './strategies/jwt.strategy';
 import { User } from '../user/entities/user.entity';
 import { UserModule } from '../user/user.module';
 import { JWT_SECRET_KEY, TOKEN_EXPIRE_TIME } from '../settings/index';
-import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [

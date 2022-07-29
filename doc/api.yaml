@@ -33,14 +33,14 @@ components:
     TokenData:
       type: object
       properties:
-        access_token:
+        accessToken:
           type: string
           example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMxNDAwZWJkLThkNDYtNGRkMS1iMjQ0LTE3YzI2ZmIwYmZjOSIsImxvZ2luIjoibG9sMyIsImlhdCI6MTY1OTAzOTc5NywiZXhwIjoxNjU5MDQzMzk3fQ.aRsyQPc33_iqZ7ISkxtHrk-pHzh6QOF5pTK2pl7p6Q4'
         refreshToken:
           type: string
           example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMxNDAwZWJkLThkNDYtNGRkMS1iMjQ0LTE3YzI2ZmIwYmZjOSIsImxvZ2luIjoibG9sMyIsImlhdCI6MTY1OTAzOTc5NywiZXhwIjoxNjU5MDQzMzk3fQ.aRsyQPc33_iqZ7ISkxtHrk-pHzh6QOF5pTK2pl7p6Q4'
       required:
-        - access_token
+        - accessToken
         - refreshToken
     Album:
       type: object

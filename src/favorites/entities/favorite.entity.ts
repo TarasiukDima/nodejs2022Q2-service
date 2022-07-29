@@ -1,9 +1,9 @@
 import { Exclude } from 'class-transformer';
 import { Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Album } from 'src/album/entities/album.entity';
-import { Artist } from 'src/artist/entities/artist.entity';
-import { FAVORITES_ENTITY_OPTIONS } from 'src/settings';
-import { Track } from 'src/track/entities/track.entity';
+import { Album } from '../../album/entities/album.entity';
+import { Artist } from '../../artist/entities/artist.entity';
+import { Track } from '../../track/entities/track.entity';
+import { FAVORITES_ENTITY_OPTIONS } from '../../settings/index';
 import { IFavorites } from '../../types/index';
 
 @Entity('favorites')

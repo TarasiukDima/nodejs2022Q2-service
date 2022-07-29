@@ -10,5 +10,6 @@ import { AlbumModule } from '../album/album.module';
   imports: [TypeOrmModule.forFeature([Track]), ArtistModule, AlbumModule],
   controllers: [TrackController],
   providers: [TrackService],
+  exports: [TrackService],
 })
 export class TrackModule {}

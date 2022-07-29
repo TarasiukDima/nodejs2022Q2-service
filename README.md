@@ -41,7 +41,6 @@ npm install --legacy-peer-deps
 
 - Rename file from .env.default to .env
 - **For work docker compose file need clear or remove folder src/migration**, migration start from Dockerfile.
-- To restart test clear db, because the tests do not clear favorites and the test fails.
 
 ## Running application
 
