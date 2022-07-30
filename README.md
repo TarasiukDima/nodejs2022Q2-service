@@ -69,12 +69,6 @@ docker scan nodejs2022q2-service_musicify-app
 docker scan nodejs2022q2-service_musicify-postgres
 ```
 
-- Download images from repo
-```
-docker pull dimatarasiuk/nodejs2022q2-service_musicify:app
-docker pull dimatarasiuk/nodejs2022q2-service_musicify:database
-```
-
 
 ## Testing
 
