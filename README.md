@@ -28,6 +28,10 @@ git checkout postgresql
 ```
 git checkout authorization
 ```
+- branch logging
+```
+git checkout logging
+```
 
 ## Installing NPM modules
 
