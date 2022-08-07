@@ -1,7 +1,11 @@
 import { Injectable, ConsoleLogger } from '@nestjs/common';
 import { join } from 'path';
 import { appendFile, mkdir, stat, writeFile } from 'fs/promises';
-import { LOGGING_VARIANTS_ARRAY, MAX_FILE_SIZE_KB } from '../../settings/index';
+import {
+  BYTES_IN_KB,
+  LOGGING_VARIANTS_ARRAY,
+  MAX_FILE_SIZE_KB,
+} from '../../settings/index';
 import {
   ERROR_CREATE_DIRECTORY,
   ERROR_CREATE_FILE,
@@ -15,7 +19,7 @@ export class LoggingService extends ConsoleLogger {
   fileErrorNumber: number;
 
   constructor(
-    private readonly maxFileSize = MAX_FILE_SIZE_KB,
+    private readonly maxFileSize = MAX_FILE_SIZE_KB * BYTES_IN_KB,
     private readonly logLevels = LOGGING_VARIANTS_ARRAY,
     private readonly filesLogDirectory = join(
       __dirname,

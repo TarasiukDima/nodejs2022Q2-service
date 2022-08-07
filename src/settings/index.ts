@@ -30,7 +30,8 @@ export const TYPEORM_PASSWORD =
 
 export const IS_PUBLIC_KEY = 'isPublic';
 
-export const MAX_FILE_SIZE_KB = +process.env.MAX_FILE_SIZE_KB || 1024;
+export const BYTES_IN_KB = 1024;
+export const MAX_FILE_SIZE_KB = +process.env.MAX_FILE_SIZE_KB || 1;
 export const LOGGING_LEVEL = +process.env.LOGGING_LEVEL || 2;
 export const LOGGING_VARIANTS_ARRAY = Object.keys(LOGGING_VARIANTS).slice(
   0,
