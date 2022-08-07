@@ -19,8 +19,11 @@ services:
       - musicify-bridge
     volumes:
       - type: bind
-        source: ./
-        target: /app/musicify/
+        source: ./src
+        target: /app/musicify/src
+      - type: bind
+        source: ./logs
+        target: /app/musicify/logs
       - /app/musicify/node_modules
     restart: always
 

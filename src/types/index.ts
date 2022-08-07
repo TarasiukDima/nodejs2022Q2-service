@@ -94,6 +94,7 @@ export enum LOGGING_FILES {
 export interface HTTPExceptionResponse {
   statusCode: number;
   error: string;
+  stack?: string;
 }
 
 export interface CustomHTTPExceptionResponse extends HTTPExceptionResponse {
