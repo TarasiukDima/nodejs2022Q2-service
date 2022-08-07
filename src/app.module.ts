@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
@@ -10,6 +10,7 @@ import { FavoritesModule } from './modules/favorites/favorites.module';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/quards/jwt-auth.guard';
+import { LoggingMiddleware } from './modules/logger/logging.middleware';
 import { typeormConfig } from './ormconfig';
 
 @Module({
@@ -31,4 +32,8 @@ import { typeormConfig } from './ormconfig';
     },
   ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggingMiddleware).forRoutes('*');
+  }
+}
