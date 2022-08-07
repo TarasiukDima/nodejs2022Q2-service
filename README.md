@@ -103,6 +103,15 @@ npm run migration:down
 ```
 
 
+## Logging
+
+After start, app will create folder logs with files:
+  - log-${number}.log - for logging app.
+  - error-${number}.log - for errors app.
+
+On renamed file .env exist two variables MAX_FILE_SIZE_KB(size 1 file), LOGGING_LEVEL(level logging from 1 to 5).
+
+
 ## Testing
 
 After application running open new terminal and enter:
