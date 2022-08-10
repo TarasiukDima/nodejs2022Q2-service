@@ -1,6 +1,6 @@
 import { Injectable, ConsoleLogger } from '@nestjs/common';
 import { join } from 'path';
-import { appendFile, mkdir, stat, writeFile } from 'fs/promises';
+import { appendFileSync, mkdirSync, statSync, writeFileSync } from 'fs';
 import {
   BYTES_IN_KB,
   LOGGING_VARIANTS_ARRAY,
@@ -52,149 +52,147 @@ export class LoggingService extends ConsoleLogger {
     );
   };
 
-  private checkExistFileOrFolder = async (path: string): Promise<boolean> => {
-    let exist = true;
-    await stat(path).catch(async () => {
-      exist = false;
-    });
-
-    return exist;
+  private checkExistFileOrFolder = (path: string): boolean => {
+    try {
+      statSync(path);
+      return true;
+    } catch (error) {
+      return false;
+    }
   };
 
-  private createDirectoryForFiles = async (): Promise<void> => {
-    const existFolder = await this.checkExistFileOrFolder(
-      this.filesLogDirectory,
-    );
+  private createDirectoryForFiles = (): void => {
+    const existFolder = this.checkExistFileOrFolder(this.filesLogDirectory);
 
     if (existFolder) return;
 
-    await mkdir(this.filesLogDirectory, { recursive: true }).catch(() => {
+    try {
+      mkdirSync(this.filesLogDirectory, { recursive: true });
+    } catch (error) {
       throw new Error(ERROR_CREATE_DIRECTORY);
-    });
+    }
   };
 
-  private createFileForLogs = async (filePath: string): Promise<void> => {
-    const existFile = await this.checkExistFileOrFolder(filePath);
+  private createFileForLogs = (filePath: string): void => {
+    const existFile = this.checkExistFileOrFolder(filePath);
 
     if (existFile) return;
 
-    await writeFile(filePath, '', {
-      encoding: 'utf8',
-      flag: 'w',
-    }).catch(() => {
+    try {
+      writeFileSync(filePath, '', {
+        encoding: 'utf8',
+        flag: 'w',
+      });
+    } catch (error) {
       throw Error(ERROR_CREATE_FILE);
-    });
+    }
   };
 
-  private checkCurrentNumberFile = async (
-    variantLog = LOGGING_FILES.log,
-  ): Promise<void> => {
+  private checkCurrentNumberFile = (variantLog = LOGGING_FILES.log): void => {
     const filePath =
       variantLog === LOGGING_FILES.log
         ? this.getLogFilePath()
         : this.getErrorFilePath();
 
-    const fileExist = await this.checkExistFileOrFolder(filePath);
+    const fileExist = this.checkExistFileOrFolder(filePath);
 
     if (!fileExist) {
-      return await this.createFileForLogs(filePath);
+      return this.createFileForLogs(filePath);
     }
 
-    await stat(filePath)
-      .then(async (stats) => {
-        if (stats.size < this.maxFileSize) return;
+    try {
+      const statSyncs = statSync(filePath);
 
-        variantLog === LOGGING_FILES.log
-          ? this.fileLogNumber++
-          : this.fileErrorNumber++;
+      if (statSyncs.size < this.maxFileSize) return;
 
-        await this.checkCurrentNumberFile(variantLog);
-      })
-      .catch(async () => null);
+      variantLog === LOGGING_FILES.log
+        ? this.fileLogNumber++
+        : this.fileErrorNumber++;
+
+      this.checkCurrentNumberFile(variantLog);
+    } catch (error) {
+      return null;
+    }
   };
 
-  private checkFiles = async (): Promise<void> => {
-    await this.createDirectoryForFiles();
-    await this.checkCurrentNumberFile(LOGGING_FILES.log);
-    await this.checkCurrentNumberFile(LOGGING_FILES.error);
+  private checkFiles = (): void => {
+    this.createDirectoryForFiles();
+    this.checkCurrentNumberFile(LOGGING_FILES.log);
+    this.checkCurrentNumberFile(LOGGING_FILES.error);
   };
 
-  private checkFileSize = async (variantLog: LOGGING_FILES): Promise<void> => {
+  private checkFileSize = (variantLog: LOGGING_FILES): void => {
     let filePath =
       variantLog === LOGGING_FILES.log
         ? this.getLogFilePath()
         : this.getErrorFilePath();
 
-    await stat(filePath)
-      .then(async (stats) => {
-        if (stats.size < this.maxFileSize) return;
+    try {
+      const statSyncs = statSync(filePath);
 
-        if (variantLog === LOGGING_FILES.log) {
-          this.fileLogNumber++;
-          filePath = this.getLogFilePath();
-        } else {
-          this.fileErrorNumber++;
-          filePath = this.getErrorFilePath();
-        }
+      if (statSyncs.size < this.maxFileSize) return;
 
-        await this.createFileForLogs(filePath);
-      })
-      .catch(() => null);
+      if (variantLog === LOGGING_FILES.log) {
+        this.fileLogNumber++;
+        filePath = this.getLogFilePath();
+      } else {
+        this.fileErrorNumber++;
+        filePath = this.getErrorFilePath();
+      }
+
+      this.createFileForLogs(filePath);
+    } catch (error) {
+      return null;
+    }
   };
 
-  private writeToFile = async (
-    message: string,
-    variantLog = LOGGING_FILES.log,
-  ) => {
+  private writeToFile = (message: string, variantLog = LOGGING_FILES.log) => {
     try {
-      await this.checkFileSize(variantLog);
+      this.checkFileSize(variantLog);
 
       const filePath =
         variantLog === LOGGING_FILES.log
           ? this.getLogFilePath()
           : this.getErrorFilePath();
-
-      await appendFile(filePath, message, 'utf8').catch(() => {
-        throw Error(ERROR_WRITE_FILE);
-      });
+      appendFileSync(filePath, message, 'utf8');
     } catch (error) {
       console.log(ERROR_WRITE_FILE);
       this.checkFiles();
     }
   };
 
-  log(message: any, ...optionalParams: Array<any>) {
+  log = (message: any, ...optionalParams: Array<any>) => {
     if (!this.logLevels.includes(LOGGING_VARIANTS.log)) return;
 
     this.writeToFile(message);
     super.log(message, optionalParams);
-  }
+  };
 
-  error(message: any, ...optionalParams: Array<any>) {
+  error = (message: any, ...optionalParams: Array<any>) => {
     if (!this.logLevels.includes(LOGGING_VARIANTS.error)) return;
 
     this.writeToFile(message, LOGGING_FILES.error);
     super.error(message, optionalParams);
-  }
+  };
 
-  warn(message: any, ...optionalParams: Array<any>) {
+  warn = (message: any, ...optionalParams: Array<any>) => {
     if (!this.logLevels.includes(LOGGING_VARIANTS.warn)) return;
 
     this.writeToFile(message);
     super.warn(message, optionalParams);
-  }
+  };
 
-  debug(message: any, ...optionalParams: Array<any>) {
+  debug = (message: any, ...optionalParams: Array<any>) => {
     if (!this.logLevels.includes(LOGGING_VARIANTS.debug)) return;
 
     this.writeToFile(message);
     super.debug(message, optionalParams);
-  }
+  };
 
-  verbose(message: any, ...optionalParams: any[]) {
+  verbose = (message: any, ...optionalParams: any[]) => {
     if (!this.logLevels.includes(LOGGING_VARIANTS.verbose)) return;
 
     this.writeToFile(message);
     super.verbose(message, optionalParams);
-  }
+  };
 }
