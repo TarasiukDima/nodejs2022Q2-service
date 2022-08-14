@@ -1,6 +1,6 @@
 import 'dotenv/config';
 
-export const PORT = Number(process.env.PORT) || 5000;
+export const PORT = Number(process.env.PORT) || 4000;
 export const CRYPT_SALT = Number(process.env.CRYPT_SALT) || 5;
 export const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'secret_string';
 export const JWT_SECRET_REFRESH_KEY =

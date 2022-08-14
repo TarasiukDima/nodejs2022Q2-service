@@ -11,13 +11,22 @@
 git clone git@github.com:TarasiukDima/nodejs2022Q2-service.git
 cd nodejs2022Q2-service
 git pull --all
+```
+- branch rest
+```
 git checkout develop
+```
+- branch docker
+```
+git checkout docker
 ```
 
 ## Installing NPM modules
 
 ```
 npm install
+ or if you have install errors
+npm install --legacy-peer-deps
 ```
 
 ## Rename
@@ -35,6 +44,31 @@ npm start
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
+
+
+## Running application with docker
+
+- Build and start app
+```
+docker-compose up --build
+```
+
+- Start app containers
+```
+docker-compose start
+```
+
+- Stop and remove app containers
+```
+docker-compose down
+```
+
+- Scan app
+```
+docker scan nodejs2022q2-service_musicify-app
+docker scan nodejs2022q2-service_musicify-postgres
+```
+
 
 ## Testing
 
