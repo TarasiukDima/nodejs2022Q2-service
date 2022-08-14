@@ -12,17 +12,29 @@ git clone git@github.com:TarasiukDima/nodejs2022Q2-service.git
 cd nodejs2022Q2-service
 git pull --all
 ```
+
 - branch rest
+
 ```
 git checkout develop
 ```
+
 - branch docker
+
 ```
 git checkout docker
 ```
+
 - branch typeorm
+
 ```
 git checkout postgresql
+```
+
+- branch authorization
+
+```
+git checkout authorization
 ```
 
 ## Installing NPM modules
@@ -37,7 +49,6 @@ npm install --legacy-peer-deps
 
 - Rename file from .env.default to .env
 - **For work docker compose file need clear or remove folder src/migration**, migration start from Dockerfile.
-- To restart test clear db, because the tests do not clear favorites and the test fails.
 
 ## Running application
 
@@ -49,31 +60,35 @@ After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
-
 ## Running application with docker
 
 - Build and start app
+
 ```
 docker-compose up --build
 ```
 
 - Start app containers
+
 ```
 docker-compose start
 ```
 
 - Stop and remove app containers
+
 ```
 docker-compose down
 ```
 
 - Scan app
+
 ```
 docker scan nodejs2022q2-service_musicify-app
 docker scan nodejs2022q2-service_musicify-postgres
 ```
 
 - Download images from repo
+
 ```
 docker pull dimatarasiuk/nodejs2022q2-service_musicify:app
 docker pull dimatarasiuk/nodejs2022q2-service_musicify:database
@@ -82,25 +97,28 @@ docker pull dimatarasiuk/nodejs2022q2-service_musicify:database
 ## Typeorm migrations
 
 - Create clear migration file
+
 ```
 npm run migration:create
 ```
 
 - Generate migration file
+
 ```
 npm run migration:generate
 ```
 
 - Update db with migration file
+
 ```
 npm run migration:run
 ```
 
 - To revert the last migration
+
 ```
 npm run migration:down
 ```
-
 
 ## Testing
 
@@ -145,7 +163,6 @@ npm run format
 Press <kbd>F5</kbd> to debug.
 
 For more information, visit: https://code.visualstudio.com/docs/editor/debugging
-
 
 ### Documentation api
 

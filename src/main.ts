@@ -1,4 +1,4 @@
-import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
 import { readFile } from 'fs/promises';
@@ -6,6 +6,7 @@ import { dirname, join } from 'path';
 import { parse } from 'yaml';
 import { AppModule } from './app.module';
 import { PORT } from './settings/index';
+import { CustomValidationPipe } from './validations/customValidationPipe';
 
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule);
@@ -16,7 +17,7 @@ const bootstrap = async () => {
   app
     .useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)))
     .useGlobalPipes(
-      new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
+      new CustomValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
     );
   SwaggerModule.setup('doc', app, document);
   await app.listen(PORT);

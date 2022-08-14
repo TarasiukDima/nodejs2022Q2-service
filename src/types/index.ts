@@ -43,3 +43,34 @@ export interface IUser {
   updatedAt: number;
 }
 /* user end */
+
+/* authorization start */
+export interface ILoginUserData {
+  login: string;
+  password: string;
+}
+
+export interface IJWTStrategyToken {
+  id: string;
+  login: string;
+}
+
+export interface ICreateJwTToken {
+  id: string;
+  login: string;
+  isRefresh?: boolean;
+}
+
+export interface ITokenAnswer {
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface IJWTData {
+  id: string;
+  login: string;
+  iat: number;
+  exp: number;
+  isRefresh?: boolean;
+}
+/* authorization end */
