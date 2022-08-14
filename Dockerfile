@@ -12,4 +12,4 @@ COPY --chown=node:node ./.env.example ./.env
 
 EXPOSE ${PORT}
 
-CMD ["npm", "run", "start:dev"]
+CMD ["npm", "run", "start:migration_dev"]

@@ -1,67 +1,53 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { v4 } from 'uuid';
-import { MemoryDB } from '../memoryDB/memoryDB';
-import { AlbumService } from '../album/album.service';
-import { TrackService } from '../track/track.service';
-import { FavoritesService } from '../favorites/favorites.service';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
 
 @Injectable()
 export class ArtistService {
-  private static memory: MemoryDB<Artist> = new MemoryDB<Artist>();
-
   constructor(
-    @Inject(forwardRef(() => AlbumService))
-    private albumService: AlbumService,
-    @Inject(forwardRef(() => TrackService))
-    private trackService: TrackService,
-    @Inject(forwardRef(() => FavoritesService))
-    private favoritesService: FavoritesService,
+    @InjectRepository(Artist)
+    private artistService: Repository<Artist>,
   ) {}
 
   create = async (createArtistDto: CreateArtistDto): Promise<Artist> => {
-    const artist = new Artist({
-      id: v4(),
-      name: createArtistDto.name,
-      grammy: createArtistDto.grammy,
-    });
+    const artist = await this.artistService.create(createArtistDto);
 
-    return await ArtistService.memory.addItem(artist);
+    return await this.artistService.save(artist);
   };
 
   findAll = async (): Promise<Array<Artist>> => {
-    return await ArtistService.memory.getAllItems();
+    return await this.artistService.find();
   };
 
   findOne = async (id: string): Promise<Artist | null> => {
-    return await ArtistService.memory.getOneItemById(id);
+    return await this.artistService.findOneBy({ id });
   };
 
   update = async (
     id: string,
     updateArtistDto: UpdateArtistDto,
   ): Promise<Artist | null> => {
-    const artist = await ArtistService.memory.getOneItemById(id);
+    const artist = await this.artistService.findOneBy({ id });
 
     if (!artist) {
       return null;
     }
 
-    const artistUpdated = new Artist({
-      ...artist,
-      ...updateArtistDto,
-    });
+    await this.artistService.update({ id }, updateArtistDto);
 
-    return await ArtistService.memory.updateItem(id, artistUpdated);
+    return await this.artistService.findOneBy({ id });
   };
 
-  remove = async (id: string): Promise<boolean> => {
-    await this.favoritesService.removeArtist(id);
-    await this.trackService.removeArtistIdLink(id);
-    await this.albumService.removeArtistIdLink(id);
+  remove = async (id: string): Promise<DeleteResult> => {
+    const artist = await this.artistService.findOneBy({ id });
 
-    return await ArtistService.memory.removeItem(id);
+    if (!artist) {
+      return null;
+    }
+
+    return await this.artistService.delete({ id });
   };
 }

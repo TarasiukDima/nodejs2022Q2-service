@@ -1,7 +1,6 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { v4 } from 'uuid';
-import { MemoryDB } from '../memoryDB/memoryDB';
-import { FavoritesService } from '../favorites/favorites.service';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './entities/track.entity';
@@ -10,21 +9,17 @@ import { ArtistService } from '../artist/artist.service';
 
 @Injectable()
 export class TrackService {
-  private static memory: MemoryDB<Track> = new MemoryDB<Track>();
-
   constructor(
-    @Inject(forwardRef(() => FavoritesService))
-    private favoritesService: FavoritesService,
-    @Inject(forwardRef(() => AlbumService))
-    private albumService: AlbumService,
-    @Inject(forwardRef(() => ArtistService))
+    @InjectRepository(Track)
+    private trackService: Repository<Track>,
+    private albumRepository: AlbumService,
     private artistService: ArtistService,
   ) {}
 
   private checkAndMakeCorrectIdAlbum = async (
     options: CreateTrackDto | UpdateTrackDto,
   ): Promise<void> => {
-    const album = await this.albumService.findOne(options.albumId);
+    const album = await this.albumRepository.findOne(options.albumId);
 
     if (!album) {
       options.albumId = null;
@@ -52,55 +47,46 @@ export class TrackService {
     }
   };
 
-  create = async (createTrackDto: CreateTrackDto) => {
+  create = async (createTrackDto: CreateTrackDto): Promise<Track> => {
     await this.checkAndMakeCorrectIds(createTrackDto);
 
-    const track = new Track({
-      id: v4(),
-      ...createTrackDto,
-      artistId: createTrackDto.artistId || null,
-      albumId: createTrackDto.albumId || null,
-    });
+    const track = await this.trackService.create(createTrackDto);
 
-    return await TrackService.memory.addItem(track);
+    return await this.trackService.save(track);
   };
 
-  findAll = async () => {
-    return await TrackService.memory.getAllItems();
+  findAll = async (): Promise<Array<Track>> => {
+    return await this.trackService.find();
   };
 
-  findOne = async (id: string) => {
-    return await TrackService.memory.getOneItemById(id);
+  findOne = async (id: string): Promise<Track> => {
+    return await this.trackService.findOneBy({ id });
   };
 
-  update = async (id: string, updateTrackDto: UpdateTrackDto) => {
+  update = async (
+    id: string,
+    updateTrackDto: UpdateTrackDto,
+  ): Promise<Track> => {
     await this.checkAndMakeCorrectIds(updateTrackDto);
 
-    const track = await TrackService.memory.getOneItemById(id);
+    const track = await this.trackService.findOneBy({ id });
 
     if (!track) {
       return null;
     }
 
-    const trackUpdated = new Track({
-      ...track,
-      ...updateTrackDto,
-    });
+    await this.trackService.update({ id }, updateTrackDto);
 
-    return await TrackService.memory.updateItem(id, trackUpdated);
+    return await this.trackService.findOneBy({ id });
   };
 
-  remove = async (id: string) => {
-    await this.favoritesService.removeTrack(id);
+  remove = async (id: string): Promise<DeleteResult> => {
+    const track = await this.trackService.findOneBy({ id });
 
-    return await TrackService.memory.removeItem(id);
-  };
+    if (!track) {
+      return null;
+    }
 
-  removeArtistIdLink = async (id: string): Promise<void> => {
-    await TrackService.memory.removeItemIdLink(id, 'artistId');
-  };
-
-  removeAlbumIdLink = async (id: string): Promise<void> => {
-    await TrackService.memory.removeItemIdLink(id, 'albumId');
+    return await this.trackService.delete({ id });
   };
 }
