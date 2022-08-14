@@ -74,3 +74,34 @@ export interface IJWTData {
   isRefresh?: boolean;
 }
 /* authorization end */
+
+/* logger start */
+export enum LOGGING_VARIANTS {
+  log = 'log',
+  error = 'error',
+  warn = 'warn',
+  debug = 'debug',
+  verbose = 'verbose',
+}
+
+export enum LOGGING_FILES {
+  log = 'log',
+  error = 'error',
+  directory = 'logs',
+  extension = '.log',
+}
+
+export interface HTTPExceptionResponse {
+  statusCode: number;
+  error: string;
+  stack?: string;
+}
+
+export interface CustomHTTPExceptionResponse extends HTTPExceptionResponse {
+  statusCode: number;
+  error: string;
+  path: string;
+  method: string;
+  timestamp: Date;
+}
+/* logger end */

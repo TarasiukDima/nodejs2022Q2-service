@@ -32,3 +32,10 @@ export enum AUTH_MESSAGES {
   invalidRefreshToken = 'Refresh token is invalid or expired',
   notAuthorization = 'User not authorization',
 }
+
+export const ERROR_CREATE_DIRECTORY = 'Error create directory';
+export const ERROR_CREATE_FILE = 'Error create file';
+export const ERROR_WRITE_FILE = 'Error write info';
+export const ERROR_SERVER = 'Server error';
+export const UNCAUGHT_ERROR = 'Uncaught error';
+export const UNHANDLED_ERROR = 'Unhandled error';
